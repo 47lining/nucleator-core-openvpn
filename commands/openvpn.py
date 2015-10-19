@@ -63,15 +63,15 @@ class Openvpn(Command):
         server_provision=server_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
         server_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         server_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        server_provision.add_argument("--type", required=False, default="server", action=ValidateOpenvpnType, help="server or client, (default: server)")
-        server_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateOpenvpnInstanceType, help="ec2 instance type, (default: t2.micro)")
+        server_provision.add_argument("--type", required=False, default="server", action=ValidateOpenvpnTypeAction, help="server or client, (default: server)")
+        server_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateOpenvpnInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
         server_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
 
         # configure subcommand
         server_configure=server_subparsers.add_parser('configure', help="Configure a new nucleator openvpn stackset")
         server_configure.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         server_configure.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        server_configure.add_argument("--type", required=False, default="server", action=ValidateOpenvpnType, help="server or client, (default: server)")
+        server_configure.add_argument("--type", required=False, default="server", action=ValidateOpenvpnTypeAction, help="server or client, (default: server)")
         server_configure.add_argument("--name", required=True, help="Instance name of openvpn stackset to configure")
 
         # delete subcommand
