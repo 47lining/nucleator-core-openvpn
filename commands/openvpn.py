@@ -56,7 +56,7 @@ class Openvpn(Command):
         openvpn_subparsers=openvpn_parser.add_subparsers(dest="subcommand")
 
         # add parser for openvpn server command
-        server=account_subparsers.add_parser('server')
+        server=openvpn_subparsers.add_parser('server')
         server_subparsers=server.add_subparsers(dest="subsubcommand")
 
         # provision subcommand
