@@ -40,7 +40,7 @@
       CageName: "{{cage_name}}"
       KeypairName: "{{keypair_name}}"
       OpenvpnInstanceType: "{{openvpn_instance_type}}"
-      ServiceRole: "{{service_role}}"
+      ServiceRole: "NucleatorOpenvpnServiceRunner"
       VpcId: "{{vpc_id}}"
       NatSecurityGroupId: "{{nat_security_group_id}}"
       BastionSecurityGroupId: "{{bastion_security_group_id}}"

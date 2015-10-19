@@ -14,8 +14,16 @@
 ---
 
 # use ansible_user ubuntu when Nucleator Group is openvpn
-# /usr/bin/python unless ansible_python_interpreter is set in host_vars/localhost
+
+- name: test whether openvpn group vars file exists
+  stat: path='{{openvpn_groupvarsfile}}'
+  register: openvpn_group_stat
+
+- name: ensure group_vars file exists for openvpn nucleator group
+  template: src="{{openvpn_group}}" dest="{{openvpn_groupvarsfile}}"
+  when: not openvpn_group_stat.stat.exists
+
 - name: set ansible_user to ubuntu when Nucleator Group is openvpn
   lineinfile:
-    dest='{{ nucleator_configuration_dir | osPathJoin("inventory", "group_vars", "MATCH_NUCLEATORGROUP__openvpn") }}'
-    line='{{"ansible_user:" ~ " " ~ "ubuntu"}}'
+    dest='{{ openvpn_groupvarsfile }}'
+    line='{{ openvpn_groupvarsentry }}'

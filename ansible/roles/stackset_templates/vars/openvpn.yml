@@ -13,6 +13,28 @@
 # limitations under the License.
 ---
 
+map_aws_region_plus_arch_to_centos_ami:
+  us-east-1:
+    q64: NOT_SUPPORTED
+    q64hvm: ami-61bbf104
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+  us-west-1:
+    q64: NOT_SUPPORTED
+    q64hvm: ami-f77fbeb3
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+  us-west-2:
+    q64: NOT_SUPPORTED
+    q64hvm: ami-d440a6e7
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+  eu-west-1:
+    q64: NOT_SUPPORTED
+    q64hvm: ami-33734044
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+
 map_aws_region_plus_arch_to_ubuntu_ami:
   us-east-1:
 #    q64: ami-f55beb9e    # Ubuntu 12.04 Precise

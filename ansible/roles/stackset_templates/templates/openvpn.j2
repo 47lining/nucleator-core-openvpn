@@ -98,7 +98,7 @@
     "Mappings": {
         "AZMap": {{ aws_accounts[account_name]["map_region_plus_redundant_zone_number_to_vpc_valid_az"] | to_json }},
         "AWSInstanceType2Arch": {{ map_aws_instance_type_to_architecture|to_json }},
-        "AWSRegionArch2UbuntuAMI": {{ map_aws_region_plus_arch_to_ubuntu_ami|to_json }}
+        "AWSRegionArch2CentosAMI": {{ map_aws_region_plus_arch_to_centos_ami|to_json }}
     },
     "Resources": {
         "OpenvpnIpAddress": {
@@ -117,7 +117,7 @@
             "Type": "AWS::CloudFormation::Stack",
             "DependsOn": "OpenvpnSecurityGroup",
             "Properties": {
-                "TemplateURL": "{{template_s3_accessor_url}}/instance.json",
+                "TemplateURL": "{{template_s3_accessor_url}}/{{stackset_instance_name}}instance.json",
                 "Parameters": {
                     "InstanceName": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
                     "NucleatorGroup": "openvpn",
@@ -129,7 +129,7 @@
                     },
                     "ImageId": {
                         "Fn::FindInMap": [
-                            "AWSRegionArch2UbuntuAMI",
+                            "AWSRegionArch2CentosAMI",
                             {
                                 "Ref": "AWS::Region"
                             },
@@ -192,7 +192,7 @@
             "Properties": {
                 "HostedZoneName": "{{ cage_name }}.{{customer_domain}}.",
                 "Comment": "A record for bastion server.",
-                "Name": "vpn.{{cage_name}}.{{customer_domain}}",
+                "Name": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
                 "Type": "A",
                 "TTL": "300",
                 "ResourceRecords": [
@@ -201,84 +201,12 @@
                     }
                 ]
             }
-        },
-        "BastionSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "Enable ssh access to / from the Bastion host",
-                "VpcId": {
-                    "Ref": "VPC"
-                },
-                "SecurityGroupIngress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "22",
-                        "ToPort": "22",
-                        "CidrIp": {
-                            "Ref": "SSHFrom"
-                        }
-                    }
-                ],
-                "SecurityGroupEgress": [
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "22",
-                        "ToPort": "22",
-                        "CidrIp": "{{ network_topology["vpc_cidr"] }}"
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "80",
-                        "ToPort": "80",
-                        "CidrIp": "0.0.0.0/0"
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "443",
-                        "ToPort": "443",
-                        "CidrIp": "0.0.0.0/0"
-                    },
-                    {
-                        "IpProtocol": "udp",
-                        "FromPort": "53",
-                        "ToPort": "53",
-                        "CidrIp": "{{ network_topology["vpc_cidr"] }}"
-                    },
-                    {
-                        "IpProtocol": "tcp",
-                        "FromPort": "9418",
-                        "ToPort": "9418",
-                        "CidrIp": "0.0.0.0/0"
-                    }
-                ],
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Fn::Join": [
-                                ".",
-                                [
-				    "security",
-                                    "bastion",
-				    "{{cage_name}}",
-				    "{{customer_name}}",
-                                    "unresolvable"
-                                ]
-                            ]
-                        }
-                    },
-		    { "Key": "NucleatorGroup", "Value": "networking" },
-    		    {{ nucleator_common_tags | to_json_fragment }}
-                ]
-            }
         }
     },
     "Outputs": {
-        "NatSecurityGroupId": {
+        "OpenvpnDnsName": {
             "Description": "ID of the NAT Security Group.  Use this to add ingress rules for instances and beanstalks in the private subnet.",
-            "Value": {
-                "Ref": "NatSecurityGroup"
-            }
+            "Value": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}"
         }
     }
 }

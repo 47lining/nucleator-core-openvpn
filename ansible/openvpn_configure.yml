@@ -35,7 +35,6 @@
 
   roles:
     - nucleatorgroups
-    - openvpn_groupvars
 
   tasks:
     - name: generate ssh config
@@ -51,5 +50,6 @@
 
 - hosts: MATCH_NUCLEATORGROUP__openvpn
   roles:
-    - openvpn
+    - { role: epel, sudo: yes}
+    - { role: openvpn, sudo: yes }
 

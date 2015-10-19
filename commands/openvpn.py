@@ -133,11 +133,14 @@ class Openvpn(Command):
         command_list.append("cage")
         command_list.append("openvpn")
 
+        inventory_manager_rolename = "NucleatorOpenvpnInventoryManager"
+
         cli.obtain_credentials(commands = command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
         
-        return cli.safe_playbook(self.get_command_playbook("openvpn_configure.yml"),
-                                 is_static=True, # dynamic inventory not required
-                                 **extra_vars
+        return cli.safe_playbook(
+            self.get_command_playbook("openvpn_configure.yml"),
+            inventory_manager_rolename,
+            **extra_vars
         )
 
     def validate_name(self, value):
