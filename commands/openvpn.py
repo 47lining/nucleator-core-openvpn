@@ -64,7 +64,7 @@ class Openvpn(Command):
         server_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         server_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
         server_provision.add_argument("--type", required=False, default="server", action=ValidateOpenvpnTypeAction, help="server or client, (default: server)")
-        server_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateOpenvpnInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
+        server_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
         server_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
 
         # configure subcommand
