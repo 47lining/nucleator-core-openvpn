@@ -16,9 +16,7 @@ from nucleator.cli.utils import ValidateCustomerAction
 from nucleator.cli.command import Command
 from nucleator.cli import properties
 from nucleator.cli import ansible
-import os, subprocess, re
-import string
-
+import re, string, argparse
 
 def validate_openvpn_type(openvpn_type_name):
     return None if openvpn_type_name in ["server", "client"] else 'type must be in ["server", "client"]'
