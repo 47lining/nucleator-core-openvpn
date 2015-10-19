@@ -18,17 +18,6 @@ from nucleator.cli import properties
 from nucleator.cli import ansible
 import re, string, argparse
 
-def validate_openvpn_type(openvpn_type_name):
-    return None if openvpn_type_name in ["server", "client"] else 'type must be in ["server", "client"]'
-
-class ValidateOpenvpnTypeAction(argparse.Action):
-    def __call__(self,parser,namespace,values,option_string=None):
-        error_msg = validate_openvpn_type(values)
-        if error_msg:
-            parser.error(error_msg)
-        else:
-            setattr(namespace,self.dest,values)
-
 def validate_instance_type(instance_type_name):
     # TODO - would be nice to validate & catch errs in instance type vocabulay here
     return None if True else "Instance Type Error Message"
@@ -55,30 +44,24 @@ class Openvpn(Command):
         openvpn_parser = subparsers.add_parser('openvpn')
         openvpn_subparsers=openvpn_parser.add_subparsers(dest="subcommand")
 
-        # add parser for openvpn server command
-        server=openvpn_subparsers.add_parser('server')
-        server_subparsers=server.add_subparsers(dest="subsubcommand")
-
         # provision subcommand
-        server_provision=server_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
-        server_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
-        server_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        server_provision.add_argument("--type", required=False, default="server", action=ValidateOpenvpnTypeAction, help="server or client, (default: server)")
-        server_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
-        server_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
+        openvpn_provision=openvpn_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
+        openvpn_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
+        openvpn_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
+        openvpn_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
+        openvpn_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
 
         # configure subcommand
-        server_configure=server_subparsers.add_parser('configure', help="Configure a new nucleator openvpn stackset")
-        server_configure.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
-        server_configure.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        server_configure.add_argument("--type", required=False, default="server", action=ValidateOpenvpnTypeAction, help="server or client, (default: server)")
-        server_configure.add_argument("--name", required=True, help="Instance name of openvpn stackset to configure")
+        openvpn_configure=openvpn_subparsers.add_parser('configure', help="Configure a new nucleator openvpn stackset")
+        openvpn_configure.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
+        openvpn_configure.add_argument("--cage", required=True, help="Name of cage from nucleator config")
+        openvpn_configure.add_argument("--name", required=True, help="Instance name of openvpn stackset to configure")
 
         # delete subcommand
-        server_delete=openvpn_subparsers.add_parser('delete', help="delete specified nucleator openvpn stackset")
-        server_delete.add_argument("--customer", action=ValidateCustomerAction, required=True, help="Name of customer from nucleator config")
-        server_delete.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        server_delete.add_argument("--name", required=True, help="Instance name of openvpn stackset to delete")
+        openvpn_delete=openvpn_subparsers.add_parser('delete', help="delete specified nucleator openvpn stackset")
+        openvpn_delete.add_argument("--customer", action=ValidateCustomerAction, required=True, help="Name of customer from nucleator config")
+        openvpn_delete.add_argument("--cage", required=True, help="Name of cage from nucleator config")
+        openvpn_delete.add_argument("--name", required=True, help="Instance name of openvpn stackset to delete")
 
     def provision(self, **kwargs):
         """
