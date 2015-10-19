@@ -1,0 +1,94 @@
+# Copyright 2015 47Lining LLC.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+
+map_aws_region_plus_arch_to_ubuntu_ami:
+  us-east-1:
+#    q64: ami-f55beb9e    # Ubuntu 12.04 Precise
+#    q64hvm: ami-c15bebaa # Ubuntu 12.04 Precise
+    q64: ami-4f3fb924    # Ubuntu 14.04 Trusty
+    q64hvm: ami-453fb92e # Ubuntu 14.04 Trusty
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+  us-west-1:
+#    q64: ami-4fcf360b    # Ubuntu 12.04 Precise
+#    q64hvm: ami-57cf3613 # Ubuntu 12.04 Precise
+    q64: ami-f329d2b7    # Ubuntu 14.04 Trusty
+    q64hvm: ami-fb29d2bf # Ubuntu 14.04 Trusty
+  us-west-2:
+#    q64: ami-97b4a0a7    # Ubuntu 12.04 Precise
+#    q64hvm: ami-9b786aab # Ubuntu 12.04 Precise Large SSD Storage
+#    q64hvm: ami-9fb4a0af # Ubuntu 12.04 Precise
+    q64: ami-21150611    # Ubuntu 14.04 Trusty
+    q64hvm: ami-2f15061f # Ubuntu 14.04 Trusty
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+  eu-west-1:
+#    q64: ami-1a207e6d    # Ubuntu 12.04 Precise
+#    q64hvm: ami-0e207e79 # Ubuntu 12.04 Precise
+    q64: ami-d1ba9ea6    # Ubuntu 14.04 Trusty
+    q64hvm: ami-d9ba9eae # Ubuntu 14.04 Trusty
+    q64Cluster: NOT_SUPPORTED
+    q64GPU: NOT_SUPPORTED
+
+openvpn_security_group_ingress:
+
+  SecurityGroupIngress:
+
+    # allow ssh to openvpn from bastion instance(s)
+    - IpProtocol: "tcp"
+      FromPort: "22"
+      ToPort: "22"
+      SourceSecurityGroupId:
+        Ref: "BastionSecurityGroupId"
+
+    # allow access on openvpn port from unrestricted clients
+    - IpProtocol: "udp"
+      FromPort: "1194"
+      ToPort: "1994"
+      CidrIp: "0.0.0.0/0"
+
+openvpn_security_group_egress:
+
+  SecurityGroupEgress:
+
+    # outbound ssh - must be enabled to bastion servers provisioned in multiple cages
+    - IpProtocol: "tcp"
+      FromPort: "22"
+      ToPort: "22"
+      CidrIp: "0.0.0.0/0"
+
+    # outbound HTTP to internet hosts
+    - IpProtocol: "tcp"
+      FromPort: "80"
+      ToPort: "80"
+      CidrIp: "0.0.0.0/0"
+
+    # outbound HTTPS to internet hosts
+    - IpProtocol: "tcp"
+      FromPort: "443"
+      ToPort: "443"
+      CidrIp: "0.0.0.0/0"
+
+    # outbound native git protocol to internet hosts
+    - IpProtocol: "tcp"
+      FromPort: "9418"
+      ToPort: "9418"
+      CidrIp: "0.0.0.0/0"
+
+    # outbound DNS, only to AWS-provided DNS
+    - IpProtocol: "tcp"
+      FromPort: "53"
+      ToPort: "53"
+      CidrIp: '{{ network_topology["awsdns_cidr"] }}'
