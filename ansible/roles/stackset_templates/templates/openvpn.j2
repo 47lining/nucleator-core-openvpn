@@ -1,212 +1,199 @@
 {
-    "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "Provision a nucleator openvpn stackset. Instantiate instance for openvpn server (or client, as specified) and ensure cage ingress rules permit inbound traffic only through openvpn instance",
-    "Parameters": {
-
-        "CageName": {
-	    "Description": "Name of the Cage for use in instance tagging",
-	    "Type": "String",
-	    "MinLength": "1",
-	    "MaxLength": "255",
-	    "AllowedPattern": "[a-zA-Z][a-zA-Z0-9]*",
-	    "ConstraintDescription": "must begin with a letter and contain only alphanumeric characters."
-	},
-
-        "KeypairName": {
-            "Description": "Name of an existing EC2 KeyPair to enable SSH access to openvpn instance via bastion",
-            "Type": "String",
-            "MinLength": "1",
-            "MaxLength": "255",
-            "AllowedPattern": "[\\x20-\\x7E]*",
-            "ConstraintDescription": "can contain only ASCII characters."
-        },
-
-        "OpenvpnInstanceType": {
-            "Description": "Openvpn host EC2 instance type",
-            "Type": "String",
-            "Default": {{default_ec2_instance_type|to_json}},
-            "AllowedValues": {{ supported_ec2_instance_types|to_json }},
-            "ConstraintDescription": "must be a valid EC2 instance type."
-        },
-
-        "ServiceRole": {
-            "Type": "String",
-            "Description": "Name of the Role to use to establish an Instance Profile to associate with the openvpn instance"
-        },
-
-	"VpcId": {
-            "Type": "String",
-            "Description": "ID of the Cage's Virtual Private Cloud"
-	},
-
-	"NatSecurityGroupId": {
-            "Type": "String",
-            "Description": "SecurityGroupId for NAT to the public subnet"
-	},
-
-	"BastionSecurityGroupId": {
-            "Type": "String",
-            "Description": "SecurityGroupId for bastion hosts"
-	},
-
-	"PublicNetworkAclId": {
-            "Type": "String",
-            "Description": "Public Network ACL ID"
-	},
-
-	"PrivateNetworkAclId": {
-            "Type": "String",
-            "Description": "Private Network ACL ID"
-	},
-
-	"DatabaseNetworkAclId": {
-            "Type": "String",
-            "Description": "Database Network ACL ID"
-	},
-
-	"PublicSubnet1Id": {
-            "Type": "String",
-            "Description": "Public Subnet 1 ID"
-	},
-
-	"PublicSubnet2Id": {
-            "Type": "String",
-            "Description": "Public Subnet 2 ID"
-	},
-
-	"PrivateSubnet1Id": {
-            "Type": "String",
-            "Description": "Private Subnet 1 ID"
-	},
-
-	"PrivateSubnet2Id": {
-            "Type": "String",
-            "Description": "Private Subnet 1 ID"
-	},
-
-	"DatabaseSubnet1Id": {
-            "Type": "String",
-            "Description": "Database Subnet 1 ID"
-	},
-
-	"DatabaseSubnet2Id": {
-            "Type": "String",
-            "Description": "Database Subnet 2 ID"
-	}
-
-    },
-    "Mappings": {
-        "AZMap": {{ aws_accounts[account_name]["map_region_plus_redundant_zone_number_to_vpc_valid_az"] | to_json }},
-        "AWSInstanceType2Arch": {{ map_aws_instance_type_to_architecture|to_json }},
-        "AWSRegionArch2CentosAMI": {{ map_aws_region_plus_arch_to_centos_ami|to_json }}
-    },
-    "Resources": {
-        "OpenvpnIpAddress": {
-            "Type": "AWS::EC2::EIP",
-            "Properties": {
-                "Domain": "vpc",
-                "InstanceId": {
-                    "Fn::GetAtt": [
-                        "OpenvpnInstance",
-                        "Outputs.InstanceId"
-                    ]
-                }
+   "AWSTemplateFormatVersion":"2010-09-09",
+   "Description":"Provision a nucleator openvpn stackset. Instantiate instance for openvpn server (or client, as specified) and ensure cage ingress rules permit inbound traffic only through openvpn instance",
+   "Parameters":{
+      "CageName":{
+         "Description":"Name of the Cage for use in instance tagging",
+         "Type":"String",
+         "MinLength":"1",
+         "MaxLength":"255",
+         "AllowedPattern":"[a-zA-Z][a-zA-Z0-9]*",
+         "ConstraintDescription":"must begin with a letter and contain only alphanumeric characters."
+      },
+      "KeypairName":{
+         "Description":"Name of an existing EC2 KeyPair to enable SSH access to openvpn instance via bastion",
+         "Type":"String",
+         "MinLength":"1",
+         "MaxLength":"255",
+         "AllowedPattern":"[\\x20-\\x7E]*",
+         "ConstraintDescription":"can contain only ASCII characters."
+      },
+      "OpenvpnInstanceType":{
+         "Description":"Openvpn host EC2 instance type",
+         "Type":"String",
+         "Default":{{ default_ec2_instance_type|to_json }},
+         "AllowedValues":{{ supported_ec2_instance_types|to_json }},
+         "ConstraintDescription":"must be a valid EC2 instance type."
+      },
+      "ServiceRole":{
+         "Type":"String",
+         "Description":"Name of the Role to use to establish an Instance Profile to associate with the openvpn instance"
+      },
+      "VpcId":{
+         "Type":"String",
+         "Description":"ID of the Cage's Virtual Private Cloud"
+      },
+      "NatSecurityGroupId":{
+         "Type":"String",
+         "Description":"SecurityGroupId for NAT to the public subnet"
+      },
+      "BastionSecurityGroupId":{
+         "Type":"String",
+         "Description":"SecurityGroupId for bastion hosts"
+      },
+      "PublicNetworkAclId":{
+         "Type":"String",
+         "Description":"Public Network ACL ID"
+      },
+      "PrivateNetworkAclId":{
+         "Type":"String",
+         "Description":"Private Network ACL ID"
+      },
+      "DatabaseNetworkAclId":{
+         "Type":"String",
+         "Description":"Database Network ACL ID"
+      },
+      "PublicSubnet1Id":{
+         "Type":"String",
+         "Description":"Public Subnet 1 ID"
+      },
+      "PublicSubnet2Id":{
+         "Type":"String",
+         "Description":"Public Subnet 2 ID"
+      },
+      "PrivateSubnet1Id":{
+         "Type":"String",
+         "Description":"Private Subnet 1 ID"
+      },
+      "PrivateSubnet2Id":{
+         "Type":"String",
+         "Description":"Private Subnet 1 ID"
+      },
+      "DatabaseSubnet1Id":{
+         "Type":"String",
+         "Description":"Database Subnet 1 ID"
+      },
+      "DatabaseSubnet2Id":{
+         "Type":"String",
+         "Description":"Database Subnet 2 ID"
+      }
+   },
+   "Mappings":{
+      "AZMap":{{ aws_accounts[account_name]["map_region_plus_redundant_zone_number_to_vpc_valid_az"] | to_json }},
+      "AWSInstanceType2Arch":{{ map_aws_instance_type_to_architecture|to_json }},
+      "AWSRegionArch2CentosAMI":{{ map_aws_region_plus_arch_to_centos_ami|to_json }}
+   },
+   "Resources":{
+      "OpenvpnIpAddress":{
+         "Type":"AWS::EC2::EIP",
+         "Properties":{
+            "Domain":"vpc",
+            "InstanceId":{
+               "Fn::GetAtt":[
+                  "OpenvpnInstance",
+                  "Outputs.InstanceId"
+               ]
             }
-        },
-        "OpenvpnInstance": {
-            "Type": "AWS::CloudFormation::Stack",
-            "DependsOn": "OpenvpnSecurityGroup",
-            "Properties": {
-                "TemplateURL": "{{template_s3_accessor_url}}/{{stackset_instance_name}}instance.json",
-                "Parameters": {
-                    "InstanceName": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
-                    "NucleatorGroup": "openvpn",
-                    "InstanceType": {
-                        "Ref": "OpenvpnInstanceType"
-                    },
-                    "KeypairName": {
-                        "Ref": "KeypairName"
-                    },
-                    "ImageId": {
-                        "Fn::FindInMap": [
-                            "AWSRegionArch2CentosAMI",
-                            {
-                                "Ref": "AWS::Region"
-                            },
-                            {
-                                "Fn::FindInMap": [
-                                    "AWSInstanceType2Arch",
-                                    {
-                                        "Ref": "OpenvpnInstanceType"
-                                    },
-                                    "Arch"
-                                ]
-                            }
+         }
+      },
+      "OpenvpnInstance":{
+         "Type":"AWS::CloudFormation::Stack",
+         "DependsOn":"OpenvpnSecurityGroup",
+         "Properties":{
+            "TemplateURL":"{{template_s3_accessor_url}}/{{stackset_instance_name}}instance.json",
+            "Parameters":{
+               "InstanceName":"{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
+               "NucleatorGroup":"openvpn",
+               "InstanceType":{
+                  "Ref":"OpenvpnInstanceType"
+               },
+               "KeypairName":{
+                  "Ref":"KeypairName"
+               },
+               "ImageId":{
+                  "Fn::FindInMap":[
+                     "AWSRegionArch2CentosAMI",
+                     {
+                        "Ref":"AWS::Region"
+                     },
+                     {
+                        "Fn::FindInMap":[
+                           "AWSInstanceType2Arch",
+                           {
+                              "Ref":"OpenvpnInstanceType"
+                           },
+                           "Arch"
                         ]
-                    },
-                    "ServiceRole": {
-                        "Ref": "ServiceRole"
-                    },
-                    "SourceDestCheck": "false",
-                    "SubnetId": {
-                        "Ref": "PublicSubnet1Id"
-                    },
-                    "SecurityGroupId": {
-                        "Ref": "OpenvpnSecurityGroup"
-                    }
-                }
+                     }
+                  ]
+               },
+               "ServiceRole":{
+                  "Ref":"ServiceRole"
+               },
+               "SourceDestCheck":"false",
+               "SubnetId":{
+                  "Ref":"PublicSubnet1Id"
+               },
+               "SecurityGroupId":{
+                  "Ref":"OpenvpnSecurityGroup"
+               }
             }
-        },
-        "OpenvpnSecurityGroup": {
-            "Type": "AWS::EC2::SecurityGroup",
-            "Properties": {
-                "GroupDescription": "Enable internal access to the openvpn server",
-                "VpcId": {
-                    "Ref": "VpcId"
-                },
-		{{ openvpn_security_group_ingress | to_json_fragment }},
-		{{ openvpn_security_group_egress | to_json_fragment }},
-                "Tags": [
-                    {
-                        "Key": "Name",
-                        "Value": {
-                            "Fn::Join": [
-                                ".",
-                                [
-				    "security",
-				    "openvpn",
-				    "{{cage_name}}",
-				    "{{customer_name}}",
-                                    "unresolvable"
-                                ]
-                            ]
-                        }
-                    },
-		    { "Key": "NucleatorGroup", "Value": "networking" },
-		    {{ nucleator_common_tags | to_json_fragment }}
-                ]
-            }
-        },
-        "OpenvpnDnsRecord": {
-            "Type": "AWS::Route53::RecordSet",
-            "Properties": {
-                "HostedZoneName": "{{ cage_name }}.{{customer_domain}}.",
-                "Comment": "A record for bastion server.",
-                "Name": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
-                "Type": "A",
-                "TTL": "300",
-                "ResourceRecords": [
-                    {
-                        "Ref": "OpenvpnIpAddress"
-                    }
-                ]
-            }
-        }
-    },
-    "Outputs": {
-        "OpenvpnDnsName": {
-            "Description": "ID of the NAT Security Group.  Use this to add ingress rules for instances and beanstalks in the private subnet.",
-            "Value": "{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}"
-        }
-    }
+         }
+      },
+      "OpenvpnSecurityGroup":{
+         "Type":"AWS::EC2::SecurityGroup",
+         "Properties":{
+            "GroupDescription":"Enable internal access to the openvpn server",
+            "VpcId":{
+               "Ref":"VpcId"
+            },
+            {{ openvpn_security_group_ingress | to_json_fragment }},
+            {{ openvpn_security_group_egress | to_json_fragment }},
+            "Tags":[
+               {
+                  "Key":"Name",
+                  "Value":{
+                     "Fn::Join":[
+                        ".",
+                        [
+                           "security",
+                           "openvpn",
+                           "{{cage_name}}",
+                           "{{customer_name}}",
+                           "unresolvable"
+                        ]
+                     ]
+                  }
+               },
+               {
+                  "Key":"NucleatorGroup",
+                  "Value":"networking"
+               },
+               {{ nucleator_common_tags | to_json_fragment }}
+            ]
+         }
+      },
+      "OpenvpnDnsRecord":{
+         "Type":"AWS::Route53::RecordSet",
+         "Properties":{
+            "HostedZoneName":"{{ cage_name }}.{{customer_domain}}.",
+            "Comment":"A record for bastion server.",
+            "Name":"{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}",
+            "Type":"A",
+            "TTL":"300",
+            "ResourceRecords":[
+               {
+                  "Ref":"OpenvpnIpAddress"
+               }
+            ]
+         }
+      }
+   },
+   "Outputs":{
+      "OpenvpnDnsName":{
+         "Description":"ID of the NAT Security Group.  Use this to add ingress rules for instances and beanstalks in the private subnet.",
+         "Value":"{{stackset_instance_name}}.{{cage_name}}.{{customer_domain}}"
+      }
+   }
 }
+
