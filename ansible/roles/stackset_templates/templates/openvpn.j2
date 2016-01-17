@@ -81,7 +81,8 @@
    "Mappings":{
       "AZMap":{{ aws_accounts[account_name]["map_region_plus_redundant_zone_number_to_vpc_valid_az"] | to_json }},
       "AWSInstanceType2Arch":{{ map_aws_instance_type_to_architecture|to_json }},
-      "AWSRegionArch2CentosAMI":{{ map_aws_region_plus_arch_to_centos_ami|to_json }}
+      "AWSRegionArch2CentosAMI":{{ map_aws_region_plus_arch_to_centos_ami|to_json }},
+      "AWSRegionArch2AmazonLinuxAMI":{{ map_aws_region_plus_arch_to_amazon_linux_ami|to_json }}
    },
    "Resources":{
       "OpenvpnIpAddress":{
@@ -112,7 +113,7 @@
                },
                "ImageId":{
                   "Fn::FindInMap":[
-                     "AWSRegionArch2CentosAMI",
+                     "AWSRegionArch2AmazonLinuxAMI",
                      {
                         "Ref":"AWS::Region"
                      },
