@@ -76,14 +76,18 @@
       "DatabaseSubnet2Id":{
          "Type":"String",
          "Description":"Database Subnet 2 ID"
-      }
+      },
+      "AmiId": {
+         "Type": "String",
+         "Description": "Id of the AMI to use."
+     }
    },
-   "Mappings":{
-      "AZMap":{{ aws_accounts[account_name]["map_region_plus_redundant_zone_number_to_vpc_valid_az"] | to_json }},
-      "AWSInstanceType2Arch":{{ map_aws_instance_type_to_architecture|to_json }},
-      "AWSRegionArch2CentosAMI":{{ map_aws_region_plus_arch_to_centos_ami|to_json }},
-      "AWSRegionArch2AmazonLinuxAMI":{{ map_aws_region_plus_arch_to_amazon_linux_ami|to_json }}
-   },
+   "Mappings": {
+        "AWSRegionToAMI": {{ map_aws_region_plus_arch_to_amazon_linux_ami|to_json }}
+    },
+    "Conditions": {
+        "UseReferenceAmi": {"Fn::Equals": [{"Ref": "AmiId"}, "None"]}
+    },
    "Resources":{
       "OpenvpnIpAddress":{
          "Type":"AWS::EC2::EIP",
@@ -111,23 +115,13 @@
                "KeypairName":{
                   "Ref":"KeypairName"
                },
-               "ImageId":{
-                  "Fn::FindInMap":[
-                     "AWSRegionArch2AmazonLinuxAMI",
-                     {
-                        "Ref":"AWS::Region"
-                     },
-                     {
-                        "Fn::FindInMap":[
-                           "AWSInstanceType2Arch",
-                           {
-                              "Ref":"OpenvpnInstanceType"
-                           },
-                           "Arch"
-                        ]
-                     }
-                  ]
-               },
+                "ImageId" : {
+                    "Fn::If": [
+                        "UseReferenceAmi",
+                        { "Fn::FindInMap": [ "AWSRegionToAMI", { "Ref": "AWS::Region" }, "q64hvm" ] },
+                        { "Ref": "AmiId" }
+                    ]
+                },
                "ServiceRole":{
                   "Ref":"ServiceRole"
                },

@@ -18,22 +18,25 @@ from nucleator.cli import properties
 from nucleator.cli import ansible
 import re, string, argparse
 
+
 def validate_instance_type(instance_type_name):
     # TODO - would be nice to validate & catch errs in instance type vocabulay here
     return None if True else "Instance Type Error Message"
 
+
 class ValidateInstanceTypeAction(argparse.Action):
-    def __call__(self,parser,namespace,values,option_string=None):
+    def __call__(self, parser, namespace, values, option_string=None):
         error_msg = validate_instance_type(values)
         if error_msg:
             parser.error(error_msg)
         else:
-            setattr(namespace,self.dest,values)
+            setattr(namespace, self.dest, values)
+
 
 class Openvpn(Command):
-    
+
     name = "openvpn"
-    
+
     default_openvpn_instance_type = "t2.micro"
 
     def parser_init(self, subparsers):
@@ -42,78 +45,78 @@ class Openvpn(Command):
         """
         # add parser for openvpn command
         openvpn_parser = subparsers.add_parser('openvpn')
-        openvpn_subparsers=openvpn_parser.add_subparsers(dest="subcommand")
+        openvpn_subparsers = openvpn_parser.add_subparsers(dest="subcommand")
 
         # provision subcommand
-        openvpn_provision=openvpn_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
+        openvpn_provision = openvpn_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
         openvpn_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         openvpn_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
         openvpn_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
         openvpn_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
 
         # configure subcommand
-        openvpn_configure=openvpn_subparsers.add_parser('configure', help="Configure a new nucleator openvpn stackset")
+        openvpn_configure = openvpn_subparsers.add_parser('configure', help="Configure a new nucleator openvpn stackset")
         openvpn_configure.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         openvpn_configure.add_argument("--cage", required=True, help="Name of cage from nucleator config")
         openvpn_configure.add_argument("--name", required=True, help="Instance name of openvpn stackset to configure")
 
         # delete subcommand
-        openvpn_delete=openvpn_subparsers.add_parser('delete', help="delete specified nucleator openvpn stackset")
+        openvpn_delete = openvpn_subparsers.add_parser('delete', help="delete specified nucleator openvpn stackset")
         openvpn_delete.add_argument("--customer", action=ValidateCustomerAction, required=True, help="Name of customer from nucleator config")
         openvpn_delete.add_argument("--cage", required=True, help="Name of cage from nucleator config")
         openvpn_delete.add_argument("--name", required=True, help="Instance name of openvpn stackset to delete")
 
     def provision(self, **kwargs):
         """
-        This command provisions a new openvpn compute instance in the indicated Customer Cage. 
+        This command provisions a new openvpn compute instance in the indicated Customer Cage.
         """
         cli = Command.get_cli(kwargs)
         cage = kwargs.get("cage", None)
         customer = kwargs.get("customer", None)
         if cage is None or customer is None:
             raise ValueError("cage and customer must be specified")
-        extra_vars={
+        extra_vars = {
             "cage_name": cage,
             "customer_name": customer,
             "verbosity": kwargs.get("verbosity", None),
         }
 
-        extra_vars["openvpn_deleting"]=kwargs.get("openvpn_deleting", False)
+        extra_vars["openvpn_deleting"] = kwargs.get("openvpn_deleting", False)
 
         name = kwargs.get("name", None)
         if name is None:
             raise ValueError("name must be specified")
         self.validate_name(name)
         extra_vars["name"] = name
-        
+
         extra_vars["cli_stackset_name"] = "openvpn"
         extra_vars["cli_stackset_instance_name"] = name
 
         instance_type = kwargs.get("instance_type", None)
         extra_vars["openvpn_instance_type"] = instance_type
-        
+
         command_list = []
         command_list.append("account")
         command_list.append("cage")
         command_list.append("openvpn")
 
-        cli.obtain_credentials(commands = command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
-        
+        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
+
         return cli.safe_playbook(self.get_command_playbook("openvpn_provision.yml"),
-                                 is_static=True, # dynamic inventory not required
+                                 is_static=True,  # dynamic inventory not required
                                  **extra_vars
-        )
+                                 )
 
     def configure(self, **kwargs):
         """
-        This command configures the specified openvpn stackset in the indicated Customer Cage. 
+        This command configures the specified openvpn stackset in the indicated Customer Cage.
         """
         cli = Command.get_cli(kwargs)
         cage = kwargs.get("cage", None)
         customer = kwargs.get("customer", None)
         if cage is None or customer is None:
             raise ValueError("cage and customer must be specified")
-        extra_vars={
+        extra_vars = {
             "cage_name": cage,
             "customer_name": customer,
             "verbosity": kwargs.get("verbosity", None),
@@ -124,7 +127,7 @@ class Openvpn(Command):
             raise ValueError("name must be specified")
         self.validate_name(name)
         extra_vars["name"] = name
-        
+
         extra_vars["cli_stackset_name"] = "openvpn"
         extra_vars["cli_stackset_instance_name"] = name
 
@@ -135,8 +138,8 @@ class Openvpn(Command):
 
         inventory_manager_rolename = "NucleatorOpenvpnInventoryManager"
 
-        cli.obtain_credentials(commands = command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
-        
+        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
+
         return cli.safe_playbook(
             self.get_command_playbook("openvpn_configure.yml"),
             inventory_manager_rolename,
@@ -161,7 +164,7 @@ class Openvpn(Command):
         This command deletes a previously provisioned Openvpn from the indicated Customer Cage.
         """
 
-        kwargs["openvpn_deleting"]=True
+        kwargs["openvpn_deleting"] = True
 
         return self.provision(**kwargs)
 
