@@ -131,6 +131,11 @@ class Openvpn(Command):
         extra_vars["cli_stackset_name"] = "openvpn"
         extra_vars["cli_stackset_instance_name"] = name
 
+        # Used by the openvpn-2fa role
+        extra_vars["EASYRSA_REQ_ORG"] = kwargs.get("rsa_org", customer)
+        extra_vars["EASYRSA_REQ_EMAIL"] = kwargs.get("rsa_email", "{0}@{1}".format(cage, customer))
+        extra_vars["EASYRSA_REQ_OU"] = kwargs.get("rsa_ou", "{0} {0} cage".format(customer, cage))
+
         command_list = []
         command_list.append("account")
         command_list.append("cage")
