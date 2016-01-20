@@ -14,7 +14,7 @@
 ---
 
 # Defaults
-
+ami_id: None
 instance_profile: "NucleatorOpenvpnServiceRunner"
 
 # group_vars/all

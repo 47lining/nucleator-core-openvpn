@@ -53,6 +53,7 @@
       PrivateSubnet2Id: "{{private_subnet2_id}}"
       DatabaseSubnet1Id: "{{database_subnet1_id}}"
       DatabaseSubnet2Id: "{{database_subnet2_id}}"
+      AmiId: "{{ami_id}}"
 
   environment: role_credentials
   register: "create_stackset_stack"
