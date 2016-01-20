@@ -13,8 +13,6 @@
 # limitations under the License.
 ---
 
-# use ansible_user ubuntu when Nucleator Group is openvpn
-
 - name: test whether openvpn group vars file exists
   stat:
     path: '{{openvpn_groupvarsfile}}'
@@ -26,7 +24,7 @@
     dest: "{{openvpn_groupvarsfile}}"
   when: not openvpn_group_stat.stat.exists
 
-- name: set ansible_user to ubuntu when Nucleator Group is openvpn
+- name: set ansible_user to {{ openvpn_ansible_user }}
   lineinfile:
     dest: '{{ openvpn_groupvarsfile }}'
     line: '{{ openvpn_groupvarsentry }}'

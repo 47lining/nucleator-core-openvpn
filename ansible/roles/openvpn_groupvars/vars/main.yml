@@ -13,5 +13,7 @@
 # limitations under the License.
 ---
 
-openvpn_groupvarsfile: '{{ nucleator_configuration_dir | osPathJoin("inventory", "group_vars", "MATCH_NUCLEATORGROUP__openvpn") }}'
-openvpn_groupvarsentry: '{{"ansible_ssh_user:" ~ " " ~ "centos"}}'
+openvpn_ansible_user: 'ec2-user'
+openvpn_group: 'MATCH_NUCLEATORGROUP__openvpn'
+openvpn_groupvarsfile: '{{ nucleator_configuration_dir | osPathJoin("inventory", "group_vars", openvpn_group) }}'
+openvpn_groupvarsentry: '{{"ansible_ssh_user:" ~ " " ~ openvpn_ansible_user}}'
