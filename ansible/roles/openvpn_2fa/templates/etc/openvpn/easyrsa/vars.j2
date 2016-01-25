@@ -1,0 +1,17 @@
+# Note increasing the key size from 1024 to 2048 is advisable,
+# however upping the key size from 2048 to 4096 only increases
+# strength by 16%, it does however provide a small amount of
+# additional security for the future
+
+set_var EASYRSA_REQ_COUNTRY         "{{ EASYRSA_REQ_COUNTRY }}"
+set_var EASYRSA_REQ_PROVINCE        "{{ EASYRSA_REQ_PROVINCE }}"
+set_var EASYRSA_REQ_CITY                "{{ EASYRSA_REQ_CITY }}"
+set_var EASYRSA_REQ_ORG                "{{ EASYRSA_REQ_ORG }}"
+set_var EASYRSA_REQ_EMAIL              "{{ EASYRSA_REQ_EMAIL }}"
+set_var EASYRSA_REQ_OU                  "{{ EASYRSA_REQ_OU }}"
+set_var EASYRSA_KEY_SIZE                {{ EASYRSA_KEY_SIZE }}
+set_var EASYRSA_ALGO                      "{{ EASYRSA_ALGO }}"
+set_var EASYRSA_CA_EXPIRE               {{ EASYRSA_CA_EXPIRE }}
+set_var EASYRSA_CERT_EXPIRE           {{ EASYRSA_CERT_EXPIRE }}
+set_var EASYRSA_CRL_DAYS               {{ EASYRSA_CRL_DAYS }}
+set_var EASYRSA_DIGEST                   "{{ EASYRSA_DIGEST }}"
