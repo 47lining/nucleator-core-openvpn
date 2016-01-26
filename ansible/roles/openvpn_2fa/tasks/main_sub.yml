@@ -97,11 +97,6 @@
     creates: /etc/openvpn/easyrsa/pki/private/ta.key
     chdir: /etc/openvpn/easyrsa/pki/private
 
-- name: Set VPN Subnet fact for the server config
-  set_fact:
-    vpn_subnet: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['network'] }}"
-  when: not vpn_subnet is defined
-
 - name: "Upload OpenVPN Server Config"
   template: src="etc/openvpn/server.conf.j2" dest="/etc/openvpn/server.conf" mode="0750" owner="vpndata" group="vpndata"
 

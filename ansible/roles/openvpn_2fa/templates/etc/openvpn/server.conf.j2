@@ -11,14 +11,15 @@ ca /etc/openvpn/easyrsa/pki/ca.crt
 cert /etc/openvpn/easyrsa/pki/issued/main.crt
 key /etc/openvpn/easyrsa/pki/private/main.key
 dh /etc/openvpn/easyrsa/pki/dh.pem
-server {{ vpn_subnet }} 255.255.0.0
+server {{ network_topology.base }} {{ network_topology.netmask }}
 ifconfig-pool-persist ipp.txt
 client-config-dir ccd
 push "redirect-gateway def1 bypass-dhcp"
-push "dhcp-option DNS 8.8.8.8"
-push "dhcp-option DNS 8.8.4.4"
-push "dhcp-option DNS 208.67.222.222"
-push "dhcp-option DNS 208.67.220.220"
+push "dhcp-option DNS {{ awsdns_ip }}"
+#push "dhcp-option DNS 8.8.8.8"
+#push "dhcp-option DNS 8.8.4.4"
+#push "dhcp-option DNS 208.67.222.222"
+#push "dhcp-option DNS 208.67.220.220"
 client-to-client
 keepalive 10 900
 tls-auth /etc/openvpn/easyrsa/pki/private/ta.key 0
