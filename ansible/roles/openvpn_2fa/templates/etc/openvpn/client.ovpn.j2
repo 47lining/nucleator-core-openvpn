@@ -4,7 +4,7 @@ proto udp
 remote {{ public_ip }}
 persist-key
 persist-tun
-ca ca.crt
+ca easyrsa/pki/ca.crt
 cert easyrsa/pki/issued/client.crt
 key easyrsa/pki/private/client.key
 {% if two_fa is defined %}
