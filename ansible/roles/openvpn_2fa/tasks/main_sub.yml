@@ -159,7 +159,7 @@
 - name: "Download the client config"
   fetch: src="/etc/openvpn/client.tar.gz" dest="~/Downloads/"
 
-- name: "Check networing var"
+- name: "Check networking var"
   lineinfile: dest="/etc/sysconfig/network" regexp="^NETWORKING" line="NETWORKING=YES"
   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
 
