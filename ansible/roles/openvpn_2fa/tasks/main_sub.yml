@@ -97,6 +97,12 @@
     creates: /etc/openvpn/easyrsa/pki/private/ta.key
     chdir: /etc/openvpn/easyrsa/pki/private
 
+- name: "Set OpenVPN Server Configuration Facts"
+  set_fact:
+    vpn_subnet: "{{ hostvars.localhost.network_topology.base }}"
+    vpn_subnet_mask: "{{ hostvars.localhost.network_topology.netmask }}"
+    vpn_dns: "{{ hostvars.localhost.awsdns_ip }}"
+
 - name: "Upload OpenVPN Server Config"
   template: src="etc/openvpn/server.conf.j2" dest="/etc/openvpn/server.conf" mode="0750" owner="vpndata" group="vpndata"
 
@@ -141,7 +147,7 @@
 - name: "Upload OpenVPN Server Config"
   template: src="etc/pam.d/openvpn.j2" dest="/etc/pam.d/openvpn" mode="0644" owner="root" group="root"
 
-- name: Set the Public Ip fact for the client config
+- name: "Set OpenVPN Client Configuration Facts"
   set_fact:
     public_ip: "{{ hostvars[inventory_hostname]['ec2_ip_address'] }}"
   when: not public_ip is defined
