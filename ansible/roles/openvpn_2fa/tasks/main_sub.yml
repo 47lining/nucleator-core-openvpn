@@ -99,9 +99,9 @@
 
 - name: "Set OpenVPN Server Configuration Facts"
   set_fact:
-    vpn_subnet: "{{ hostvars.localhost.network_topology.base }}"
+    vpn_subnet: "{{ hostvars.localhost.first8 }}.{{ hostvars.localhost.second8 }}.0.0"
     vpn_subnet_mask: "{{ hostvars.localhost.network_topology.netmask }}"
-    vpn_dns: "{{ hostvars.localhost.awsdns_ip }}"
+    vpn_dns: "{{ hostvars.localhost.first8 }}.{{ hostvars.localhost.second8 }}.0.2"
 
 - name: "Upload OpenVPN Server Config"
   template: src="etc/openvpn/server.conf.j2" dest="/etc/openvpn/server.conf" mode="0750" owner="vpndata" group="vpndata"
