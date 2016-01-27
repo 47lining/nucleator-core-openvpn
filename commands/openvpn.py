@@ -36,8 +36,7 @@ class ValidateInstanceTypeAction(argparse.Action):
 class Openvpn(Command):
 
     name = "openvpn"
-
-    default_openvpn_instance_type = "t2.micro"
+    default_openvpn_instance_type = "t2.small"
 
     def parser_init(self, subparsers):
         """
@@ -51,7 +50,7 @@ class Openvpn(Command):
         openvpn_provision = openvpn_subparsers.add_parser('provision', help="Provision a new nucleator openvpn stackset")
         openvpn_provision.add_argument("--customer", required=True, action=ValidateCustomerAction, help="Name of customer from nucleator config")
         openvpn_provision.add_argument("--cage", required=True, help="Name of cage from nucleator config")
-        openvpn_provision.add_argument("--instance-type", required=False, default="t2.micro", action=ValidateInstanceTypeAction, help="ec2 instance type, (default: t2.micro)")
+        openvpn_provision.add_argument("--instance-type", required=False, default=self.default_openvpn_instance_type, action=ValidateInstanceTypeAction, help="ec2 instance type, (default: '{0}')".format(self.default_openvpn_instance_type))
         openvpn_provision.add_argument("--name", required=True, help="Instance name of openvpn stackset to provision")
 
         # configure subcommand
