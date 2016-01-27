@@ -171,5 +171,17 @@
 
 # todo... systemd stuff... (service name openvpn@server.service)
 
-- name: "Start OpenVPN"
+- name: "Start the OpenVPN Service - Debian"
   service: name=openvpn state=restarted
+  register: openvpn_restart_output
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: "Start the OpenVPN Service - Fedora"
+  sudo: yes
+  command: service openvpn restart
+  register: openvpn_restart_output
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Amazon'
+
+- name: "Display OpenVPN Service restart output"
+  debug:
+    var: openvpn_restart_output
