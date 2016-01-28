@@ -176,6 +176,7 @@
   service:
     name: openvpn
     enabled: yes
+    state: restarted
 
 # The Ansible service module fails to actually restart the
 # service, it says it succeeds and  that the state is 'started'
