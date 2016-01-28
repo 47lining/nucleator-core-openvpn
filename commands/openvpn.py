@@ -36,7 +36,7 @@ class ValidateInstanceTypeAction(argparse.Action):
 class Openvpn(Command):
 
     name = "openvpn"
-    default_openvpn_instance_type = "t2.small"
+    default_openvpn_instance_type = "t2.micro"
 
     def parser_init(self, subparsers):
         """
