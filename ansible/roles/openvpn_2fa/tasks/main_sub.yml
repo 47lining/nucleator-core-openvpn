@@ -171,14 +171,20 @@
 
 # todo... systemd stuff... (service name openvpn@server.service)
 
-- name: "Start the OpenVPN Service"
+- name: "Enable the OpenVPN Service"
   sudo: yes
   service:
     name: openvpn
-    state: restarted
     enabled: yes
+
+# The Ansible service module fails to actually restart the
+# service, it says it succeeds and  that the state is 'started'
+# but it really isn't, we'll just go old school here...
+- name: "Restart the OpenVPN Service"
+  sudo: yes
+  command: sudo service openvpn restart
   register: openvpn_restart_output
 
-- name: "Display OpenVPN Service restart output"
+- name: "Display the OpenVPN Service restart output"
   debug:
     var: openvpn_restart_output
