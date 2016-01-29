@@ -171,21 +171,26 @@
 
 # todo... systemd stuff... (service name openvpn@server.service)
 
-- name: "Enable the OpenVPN Service"
+- name: "Enable and Restart the OpenVPN Service"
   sudo: yes
   service:
     name: openvpn
     enabled: yes
     state: restarted
-
-# The Ansible service module fails to actually restart the
-# service, it says it succeeds and  that the state is 'started'
-# but it really isn't, we'll just go old school here...
-- name: "Restart the OpenVPN Service"
-  sudo: yes
-  command: sudo service openvpn restart
   register: openvpn_restart_output
 
 - name: "Display the OpenVPN Service restart output"
   debug:
     var: openvpn_restart_output
+
+- name: "Restart the OpenVPN Server"
+  command: shutdown -r 0 "Reboot triggered by Nucleator"
+  sudo: true
+  async: 0
+  poll: 0
+  ignore_errors: true
+
+- name: "Wait for it..."
+  local_action: wait_for host={{ ansible_fqdn }} path=/etc/hosts delay=30 timeout=900 state=present
+  sudo: false
+
