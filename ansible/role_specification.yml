@@ -126,4 +126,20 @@ role_specification:
                 - "ec2:RevokeSecurityGroupIngress"
                 - "ec2:DescribeSecurityGroups"
                 - "ec2:AuthorizeSecurityGroupEgress"
+                - "ec2:TerminateInstances"
+                - "ec2:describeAddresses"
+                - "ec2:releaseAddress"
+                - "ec2:DescribeInstances"
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - "route53:ListHostedZones"
+                - "route53:ChangeResourceRecordSets"
+                - "route53:GetChange"
+                - "route53:ListResourceRecordSets"
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - "iam:RemoveRoleFromInstanceProfile"
+                - "iam:DeleteInstanceProfile"
               Resource: '*'
