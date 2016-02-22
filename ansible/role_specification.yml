@@ -126,10 +126,11 @@ role_specification:
                 - "ec2:RevokeSecurityGroupIngress"
                 - "ec2:DescribeSecurityGroups"
                 - "ec2:AuthorizeSecurityGroupEgress"
+                - "ec2:DescribeInstances"
                 - "ec2:TerminateInstances"
                 - "ec2:describeAddresses"
                 - "ec2:releaseAddress"
-                - "ec2:DescribeInstances"
+                - "ec2:disassociateAddress"
               Resource: '*'
             - Effect: Allow
               Action:
