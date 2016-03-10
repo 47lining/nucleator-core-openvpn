@@ -78,6 +78,7 @@ class Openvpn(Command):
             "cage_name": cage,
             "customer_name": customer,
             "verbosity": kwargs.get("verbosity", None),
+            "debug_credentials": kwargs.get("debug_credentials", None),
         }
 
         extra_vars["openvpn_deleting"] = kwargs.get("openvpn_deleting", False)
@@ -99,7 +100,7 @@ class Openvpn(Command):
         command_list.append("cage")
         command_list.append("openvpn")
 
-        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
+        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None), debug_credentials=kwargs.get("debug_credentials", None))
 
         return cli.safe_playbook(self.get_command_playbook("openvpn_provision.yml"),
                                  is_static=True,  # dynamic inventory not required
@@ -119,6 +120,7 @@ class Openvpn(Command):
             "cage_name": cage,
             "customer_name": customer,
             "verbosity": kwargs.get("verbosity", None),
+            "debug_credentials": kwargs.get("debug_credentials", None),
         }
 
         name = kwargs.get("name", None)
@@ -142,7 +144,7 @@ class Openvpn(Command):
 
         inventory_manager_rolename = "NucleatorOpenvpnInventoryManager"
 
-        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None))
+        cli.obtain_credentials(commands=command_list, cage=cage, customer=customer, verbosity=kwargs.get("verbosity", None), debug_credentials=kwargs.get("debug_credentials", None))
 
         return cli.safe_playbook(
             self.get_command_playbook("openvpn_configure.yml"),
